@@ -14,7 +14,6 @@ export default function DashboardPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
 
-  // (optionnel) paramètres de filtre
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [selectedTag, setSelectedTag] = useState("");
@@ -35,7 +34,6 @@ export default function DashboardPage() {
       const data = await fetchResources(params);
       setResources(Array.isArray(data) ? data : []);
     } catch (e) {
-      // si 401 -> token absent/expiré (ProtectedRoute devrait empêcher ça, mais on gère quand même)
       setError("Impossible de charger les ressources (API down ou token invalide).");
     } finally {
       setIsLoading(false);
@@ -55,13 +53,11 @@ export default function DashboardPage() {
   }, [debouncedSearch, selectedTag]);
 
   async function handleDelete(id) {
-    // UX simple : confirmation
     const ok = window.confirm("Supprimer cette ressource ?");
     if (!ok) return;
 
     try {
       await deleteResource(id);
-      // ✅ Mise à jour locale sans reload
       setResources((prev) => prev.filter((r) => r.id !== id));
     } catch (e) {
       alert("Suppression impossible (token invalide ? API down ?).");
